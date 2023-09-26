@@ -3,74 +3,142 @@
 //Defino las variables de puntuación fuera del resto de funciones, para que puedan acceder a ellas
 let playerScore = 0;
 let computerScore = 0;
+result.textContent = "Get 5 points to beat the machine"
 
-//defino la función de una ronda, con las funciones de selección de opción dentro, para que también se repitan a la hora de repetir la ronda
-function playRound(playerSelection, computerSelection) {
+//Selecciona los botones de las opciones
+let playerOptions = document.querySelectorAll("#weapons button");
 
-    //se define cómo se genera la opción del PC de forma aleatoria de entre un array
-    function getComputerChoice(){
-        const options = ["paper", "rock", "scissors"]
-        let n = Math.floor(Math.random()*options.length);
-        return options[n];
-    }
-    //se define un prompt para pedir una opción al jugador
-    function getPlayerChoice(){
-        let playerAnswer = prompt("Choose your weapon: Rock, Paper or Scissors");
-        if ((playerAnswer === "" || playerAnswer === null || playerAnswer === undefined)){
-            alert("It's okay, we'll play later!");
-        }else if (!(playerAnswer.toLowerCase() === "paper" || playerAnswer.toLowerCase() === "rock" || playerAnswer.toLowerCase() === "scissors")){
-            alert("Reload and try again!");
+//Añade listener al click e inicia el juego
+for (let i=0; i<playerOptions.length;i++){
+    playerOptions[i].addEventListener("click", playGame);
+};
+
+//Definición de función juego
+function playGame(e){
+    getPlayerChoice(e);
+    getComputerChoice();
+    checkWinner(playerSelection, computerSelection);
+};
+
+
+//Opción que escoge el jugador
+
+let playerSelection;
+function getPlayerChoice(e){
+
+    //segun el id del botón que pincha
+    playerSelection = e.target.getAttribute("id");
+
+    //muestra el icono elegido en su ficha
+    imgSel(playerSelection, imgPlayer);
+    outputPlayerSel.appendChild(imgPlayer);
+};
+
+//Función que selecciona la opción del PC de forma aleatoria:
+
+let computerSelection;
+function getComputerChoice(){
+
+    //declara un array con las opciones 
+    const options = ["paper", "rock", "scissors"]
+    //calcula un entero aleatorio entre 0 y 2
+    let n = Math.floor(Math.random()*options.length);
+    //se almacena la opcion con el índice calculado
+    computerSelection = options[n];
+
+    //muestra el icono calculado en su ficha
+    imgSel(computerSelection, imgComputer);
+    outputPCSel.appendChild(imgComputer);
+};
+
+//Imagen de la opción escogida
+//1ª variable la selección del jugador, 2ª dónde lo almacena
+
+let imgPlayer = document.createElement("img");
+let imgComputer = document.createElement("img");
+
+function imgSel(sel, img){
+    img.src = "";
+    if (sel === "rock"){
+        img.src = "/images/piedra.png";
+        img.alt = "rock";
+    }else if (sel === "paper"){
+        img.src = "/images/papel.png";
+        img.alt = "paper";
+    }else if (sel === "scissors"){
+        img.src = "/images/tijera.png";
+        img.alt = "scissors";
+    };
+    return img;
+};
+
+
+//Acceso a las fichas de los jugadores
+let outputPCScore = document.getElementById("computerScore");
+let outputPlayerScore = document.getElementById("playerScore");
+let outputPCSel = document.getElementById("computerSel");
+let outputPlayerSel = document.getElementById("playerSel");
+
+
+//Condiciones en que el jugador gana
+function checkWinner(){
+
+    //Hasta que alguno llegue a 5 puntos
+    while (playerScore < 5 && computerScore < 5){
+
+        //condiciones en que player gana
+        if ((playerSelection === "paper" && computerSelection === "rock")
+            || (playerSelection === "rock" && computerSelection === "scissors")
+            || (playerSelection === "scissors" && computerSelection === "paper")){
+            result.textContent = `You won this round!`;
+            //se le añade un punto
+            playerScore++;
+
+        //empate, no se suma
+        }else if (playerSelection === computerSelection){
+            result.textContent = `We tied this round!`;
+
+        //si no gana o empata
         }else{
-            return playerAnswer.toLowerCase();
-        }
-    }
+            result.textContent = `You lost this round!`;
+            //se suma un punto al PC
+            computerScore++;
+        };
 
-    //se almacenan las elecciones en las variables que se le pasa a la función playRound()
-    computerSelection = getComputerChoice();
-    playerSelection = getPlayerChoice();
+        //Se añade la puntuación como texto a sus fichas
+        outputPCScore.textContent = `${computerScore}`;
+        outputPlayerScore.textContent = `${playerScore}`;      
+
+        //sale del bucle para dejar elegir otra vez
+        break;
+    };
+
+    if(playerScore == 5 || computerScore == 5){
+        if (playerScore == 5){
+            result.textContent = "YOU DEFEATED THE MACHINES"
+            outputPlayerSel.style.background = "lightgreen";
+            outputPCSel.style.background = "palevioletred";
+        }else{
+            result.textContent = "MACHINES BEATS HUMANS";
+            outputPlayerSel.style.background = "palevioletred";
+            outputPCSel.style.background = "lightgreen";
+        };
+        restart();
+    }
     
-    //se definen las condiciones en que el jugador gana, y se le suma un punto
-    if ((playerSelection === "paper" && computerSelection === "rock")
-        || (playerSelection === "rock" && computerSelection === "scissors")
-        || (playerSelection === "scissors" && computerSelection === "paper")){
-        alert(`${playerSelection} beats ${computerSelection}. You won this round!`);
-        playerScore++;
-    //si eligen lo mismo no se suma puntuación
-    }else if (playerSelection === computerSelection){
-        alert(`You and I choosed ${computerSelection}! We tied this round!`);       
-    //si no cumple condiciones de empate o victoria es que pierde, se suma un punto al PC
-    }else{
-        alert(`${computerSelection} beats ${playerSelection}. You lost this round!`);
-        computerScore++;
-    }
+};
 
-    //se imprime en cada ronda lo que ha elegido cada uno y qué puntuación llevan
-    console.log("Tu: " + playerSelection);
-    console.log("Tu: " + playerScore);
-    console.log("PC: " + computerSelection);
-    console.log("PC: " + computerScore);
+
+//reinicio de variables
+function restart(){
+    playerScore = 0;
+    computerScore = 0;
+    imgPlayer.remove();
+    imgComputer.remove();
 }
 
-//se define la función principal que repetirá con un for 5 rondas de playRound()
-function Game(){
 
-    for (let i=0; i<5; i++){
-        playRound();
-    }
-    //al final muestra la puntuación de cada uno
-    console.log(`Your score is ${playerScore} and mine is ${computerScore}`);
 
-    //muestra un mensaje declarando al vencedor
-    if (playerScore > computerScore){
-        console.log("You won!");
-    }else if(playerScore === computerScore){
-        console.log("We tied!");
-    }else{
-        console.log("You lost!");
-    }
-}
-
-Game();
 
 
 
