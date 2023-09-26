@@ -48,21 +48,21 @@ button:hover {
 }
 
 #weapons #rock {
-    background-image:url(/images/piedra.png);
+    background-image:url(./images/piedra.png);
     height: 150px;
     width: 150px;
     border-radius: 90%;
 }
 
 #weapons #paper {
-    background-image:url(/images/papel.png);
+    background-image:url(./images/papel.png);
     height: 150px;
     width: 150px;
     border-radius: 90%;
 }
 
 #weapons #scissors {
-    background-image:url(/images/tijera.png);
+    background-image:url(./images/tijera.png);
     height: 150px;
     width: 150px;
     border-radius: 90%;

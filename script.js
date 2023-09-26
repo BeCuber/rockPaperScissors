@@ -60,13 +60,13 @@ let imgComputer = document.createElement("img");
 function imgSel(sel, img){
     img.src = "";
     if (sel === "rock"){
-        img.src = "/images/piedra.png";
+        img.src = "./images/piedra.png";
         img.alt = "rock";
     }else if (sel === "paper"){
-        img.src = "/images/papel.png";
+        img.src = "./images/papel.png";
         img.alt = "paper";
     }else if (sel === "scissors"){
-        img.src = "/images/tijera.png";
+        img.src = "./images/tijera.png";
         img.alt = "scissors";
     };
     return img;
